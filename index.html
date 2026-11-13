@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoring Baterai AMR & Kontrol EVC</title>
+    <title>Monitoring Baterai AMR</title>
     <style>
         :root {
             --bg-color: #f4f7f6;
@@ -143,7 +143,7 @@
     <div class="container">
         <div class="header">
             <h2>Sistem Monitoring & Kontrol Jarak Jauh</h2>
-            <p>Pemantauan Voltase Baterai AMR & Auto Restart EVC</p>
+            <p>Pemantauan Voltase Baterai & Auto Restart AMR</p>
         </div>
 
         <!-- TABEL DAFTAR PELANGGAN -->
@@ -156,7 +156,7 @@
                             <th>No</th>
                             <th>Nama Pelanggan</th>
                             <th>Voltase Baterai AMR</th>
-                            <th>Status EVC</th>
+                            <th>Status AMR</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -170,7 +170,7 @@
         <!-- PANEL KONTROL -->
         <div class="card control-panel" id="controlPanel">
             <h3 id="panelCustomerName">Nama Pelanggan</h3>
-            <p style="color: #666; font-size: 0.9rem;">Panel Deteksi Baterai AMR & Terminal Kontrol EVC</p>
+            <p style="color: #666; font-size: 0.9rem;">Panel Deteksi Baterai AMR</p>
             
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 20px;">
                 
@@ -184,9 +184,9 @@
                     </div>
                 </div>
 
-                <!-- Box Kontrol EVC -->
+                <!-- Box Kontrol AMR -->
                 <div style="flex: 1; min-width: 250px; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
-                    <h4>Status Perangkat EVC</h4>
+                    <h4>Status Perangkat AMR</h4>
                     <div class="device-state-box" style="margin-top: 0;">
                         <div id="panelDeviceState" class="device-state-text" style="background-color: var(--success);">ON (AKTIF)</div>
                     </div>
@@ -331,10 +331,10 @@
             stateElem.style.backgroundColor = "var(--warning)";
             stateElem.style.color = "#000";
 
-            addLog(`[Aksi] Mengirim perintah ${command} ke EVC ${customerName}...`);
+            addLog(`[Aksi] Mengirim perintah ${command} ke AMR ${customerName}...`);
             
             setTimeout(() => {
-                addLog(`[Status] EVC ${customerName} berhasil dieksekusi menjadi: ${command}`);
+                addLog(`[Status] AMR ${customerName} berhasil dieksekusi menjadi: ${command}`);
                 
                 if (command === 'ON') {
                     customers[customerIndex].state = 'ON';
