@@ -115,12 +115,9 @@
     </div>
 
     <script>
-        // Simulasi fetch data dari Google Apps Script API (Bisa disesuaikan dengan WebApp URL GAS Anda)
-        // const GAS_API_URL = "https://script.google.com/macros/s/AKfycby.../exec";
-
+        // Simulasi fetch data dari Google Apps Script API
         function fetchVoltageData() {
-            // Dalam implementasi nyata, gunakan fetch(GAS_API_URL).
-            // Di sini kita mensimulasikan perubahan voltase untuk demonstrasi.
+            // Simulasi perubahan voltase
             const simulatedVoltages = [3.65, 3.40, 3.25, 3.20, 3.15];
             const randomVolt = simulatedVoltages[Math.floor(Math.random() * simulatedVoltages.length)];
             
@@ -129,10 +126,19 @@
             
             voltageElem.innerText = randomVolt.toFixed(2) + " V";
             
+            // Logika ketika voltase di bawah atau sama dengan batas 3.20V
             if (randomVolt <= 3.20) {
                 statusElem.className = "status-badge status-warning";
                 statusElem.innerText = "Peringatan: Battery Low!";
                 addLog(`[Alert] Voltase EVC terdeteksi ${randomVolt.toFixed(2)}V (Threshold tercapai).`);
+                
+                // --- PENAMBAHAN FITUR POP-UP DI SINI ---
+                // Menggunakan setTimeout pendek (10ms) agar UI (angka voltase) 
+                // ter-update di layar terlebih dahulu sebelum pop-up menahan proses browser.
+                setTimeout(() => {
+                    alert("BATERAI AMR SUDAH LOW,SEGERA PETUGAS CEK KE LOKASI");
+                }, 10);
+                
             } else {
                 statusElem.className = "status-badge status-safe";
                 statusElem.innerText = "Aman (Normal)";
@@ -140,9 +146,7 @@
         }
 
         function sendCommand(command) {
-            // Dalam implementasi nyata, fungsi ini akan melakukan POST request ke GAS untuk memicu SMS Gateway
             addLog(`[Aksi] Mengirim perintah ${command} ke Arduino EVC...`);
-            
             setTimeout(() => {
                 addLog(`[Status] Perintah ${command} berhasil diterima oleh modul.`);
             }, 1500);
