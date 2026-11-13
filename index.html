@@ -11,6 +11,8 @@
             --primary: #0056b3;
             --danger: #dc3545;
             --success: #28a745;
+            --warning: #ffc107;
+            --info: #17a2b8;
             --text-dark: #333333;
         }
         body {
@@ -49,10 +51,29 @@
             border-radius: 20px;
             font-weight: bold;
             color: white;
+            transition: all 0.3s ease;
         }
         .status-safe { background-color: var(--success); }
         .status-warning { background-color: var(--danger); }
         
+        .device-state-box {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+        }
+        
+        .device-state-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            color: white;
+            background-color: var(--success); /* Default ON */
+        }
+
         .btn {
             padding: 10px 20px;
             border: none;
@@ -67,6 +88,7 @@
         .btn:hover { opacity: 0.8; }
         .btn-primary { background-color: var(--primary); }
         .btn-danger { background-color: var(--danger); }
+        .btn-warning { background-color: #ff9800; }
         
         .log-box {
             margin-top: 15px;
@@ -101,13 +123,20 @@
 
         <!-- Card 2: Auto Restart Command -->
         <div class="card">
-            <h3>Terminal Auto Restart (SMS/Web)</h3>
-            <p>Kirim perintah remote ke modul Arduino di lapangan.</p>
+            <h3>Terminal Kontrol Jarak Jauh</h3>
+            
+            <!-- PANEL STATUS PERANGKAT BARU -->
+            <div class="device-state-box">
+                <div style="font-size: 0.9rem; color: #555;">Status EVC Saat Ini:</div>
+                <div id="deviceStateText" class="device-state-text">ON (AKTIF)</div>
+            </div>
+
             <div>
                 <button class="btn btn-primary" onclick="sendCommand('ON')">ON</button>
                 <button class="btn btn-danger" onclick="sendCommand('OFF')">OFF</button>
-                <button class="btn btn-danger" onclick="sendCommand('RESTART')" style="background-color: #ff9800;">RESTART</button>
+                <button class="btn btn-warning" onclick="sendCommand('RESTART')">RESTART</button>
             </div>
+            
             <div class="log-box" id="commandLog">
                 [Sistem] Menunggu instruksi...
             </div>
@@ -115,9 +144,7 @@
     </div>
 
     <script>
-        // Simulasi fetch data dari Google Apps Script API
         function fetchVoltageData() {
-            // Simulasi perubahan voltase
             const simulatedVoltages = [3.65, 3.40, 3.25, 3.20, 3.15];
             const randomVolt = simulatedVoltages[Math.floor(Math.random() * simulatedVoltages.length)];
             
@@ -126,17 +153,13 @@
             
             voltageElem.innerText = randomVolt.toFixed(2) + " V";
             
-            // Logika ketika voltase di bawah atau sama dengan batas 3.20V
             if (randomVolt <= 3.20) {
                 statusElem.className = "status-badge status-warning";
                 statusElem.innerText = "Peringatan: Battery Low!";
                 addLog(`[Alert] Voltase EVC terdeteksi ${randomVolt.toFixed(2)}V (Threshold tercapai).`);
                 
-                // --- PENAMBAHAN FITUR POP-UP DI SINI ---
-                // Menggunakan setTimeout pendek (10ms) agar UI (angka voltase) 
-                // ter-update di layar terlebih dahulu sebelum pop-up menahan proses browser.
                 setTimeout(() => {
-                    alert("BATERAI AMR SUDAH LOW,SEGERA PETUGAS CEK KE LOKASI");
+                    alert("BATERAI AMR SUDAH LOW, SEGERA PETUGAS CEK KE LOKASI");
                 }, 10);
                 
             } else {
@@ -146,10 +169,42 @@
         }
 
         function sendCommand(command) {
+            const stateText = document.getElementById('deviceStateText');
+            
+            // 1. Tampilkan status "Memproses..." berwarna kuning saat tombol ditekan
+            stateText.innerText = `MEMPROSES ${command}...`;
+            stateText.style.backgroundColor = "var(--warning)";
+            stateText.style.color = "#000"; // Teks hitam agar terbaca di background kuning
+
             addLog(`[Aksi] Mengirim perintah ${command} ke Arduino EVC...`);
+            
+            // 2. Simulasikan jeda pengiriman data jaringan (1.5 detik)
             setTimeout(() => {
-                addLog(`[Status] Perintah ${command} berhasil diterima oleh modul.`);
-            }, 1500);
+                addLog(`[Status] Perangkat berhasil dieksekusi menjadi: ${command}`);
+                
+                // 3. Ubah indikator status sesuai perintah yang berhasil
+                if (command === 'ON') {
+                    stateText.innerText = "ON (AKTIF)";
+                    stateText.style.backgroundColor = "var(--success)";
+                    stateText.style.color = "white";
+                } 
+                else if (command === 'OFF') {
+                    stateText.innerText = "OFF (MATI)";
+                    stateText.style.backgroundColor = "var(--danger)";
+                    stateText.style.color = "white";
+                } 
+                else if (command === 'RESTART') {
+                    stateText.innerText = "BERHASIL RESTART";
+                    stateText.style.backgroundColor = "var(--info)"; // Warna biru muda
+                    stateText.style.color = "white";
+                    
+                    // Jika restart, setelah 3 detik status kembali menjadi ON
+                    setTimeout(() => {
+                        stateText.innerText = "ON (AKTIF)";
+                        stateText.style.backgroundColor = "var(--success)";
+                    }, 3000);
+                }
+            }, 1500); // Waktu delay simulasi balasan dari Arduino
         }
 
         function addLog(message) {
